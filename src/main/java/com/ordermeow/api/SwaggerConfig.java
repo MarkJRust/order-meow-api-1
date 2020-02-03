@@ -19,7 +19,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .useDefaultResponseMessages(false)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("edu.umich.photoalbum"))
+                .apis(RequestHandlerSelectors.basePackage(this.getClass().getPackage().getName()))
                 .paths(PathSelectors.any())
                 .build();
     }
