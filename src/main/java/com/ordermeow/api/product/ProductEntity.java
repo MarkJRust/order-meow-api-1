@@ -1,4 +1,4 @@
-package com.ordermeow.api.user;
+package com.ordermeow.api.product;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sun.istack.Nullable;
@@ -10,25 +10,20 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "users")
+@Table(name = "product")
 @Data
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UserEntity {
+public class ProductEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @ApiModelProperty(notes = "The id of the user")
+    @ApiModelProperty(notes = "The id of the product")
     @Nullable
-    private Long userId;
+    private Long productId;
 
     @Column
-    @ApiModelProperty(notes = "The user's username")
+    @ApiModelProperty(notes = "The product's name")
     @NotNull
-    private String username;
-
-    @Column
-    @ApiModelProperty(notes = "The user's password encoded")
-    @NotNull
-    private String password;
+    private String productName;
 }
