@@ -30,7 +30,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
 
                 // Non-authenticated application endpoints
-                .antMatchers("/register").permitAll()
+                .antMatchers("/register", "/product").permitAll()
 
                 // Swagger
                 .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/security", "/swagger-ui.html", "/webjars/**").permitAll()
