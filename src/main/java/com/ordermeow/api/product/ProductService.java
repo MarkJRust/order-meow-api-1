@@ -19,6 +19,11 @@ public class ProductService {
 
     public ProductEntity getProduct(Long id) {
         return productRepository.findById(id).orElseThrow(() -> new ProductExceptions.ProductNotFound(id));
+
+    }
+
+    public void deleteProductById(Long productId) {
+        productRepository.deleteByProductId(productId);
     }
 }
 
