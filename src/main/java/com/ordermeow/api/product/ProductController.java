@@ -1,7 +1,6 @@
 package com.ordermeow.api.product;
 
 import io.swagger.annotations.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,7 +38,7 @@ public class ProductController {
     @DeleteMapping("/product/{productId}")
     public String deleteByProductId(
             @PathVariable Long productId) {
-            productService.deleteProductById(productId);
+        productService.deleteProductById(productId);
         return "";
     }
 }

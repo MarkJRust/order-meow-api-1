@@ -23,7 +23,8 @@ public class ProductService {
     }
 
     public void deleteProductById(Long productId) {
-        productRepository.deleteByProductId(productId);
+        productRepository.findById(productId).orElseThrow(() -> new ProductExceptions.ProductNotFound(productId));
+        productRepository.deleteById(productId);
     }
 }
 
