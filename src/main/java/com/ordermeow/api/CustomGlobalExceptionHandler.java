@@ -1,6 +1,7 @@
 package com.ordermeow.api;
 
 import com.ordermeow.api.product.ProductExceptions;
+import com.ordermeow.api.user.UserExceptions;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -18,7 +19,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         response.sendError(HttpStatus.UNAUTHORIZED.value());
     }
 
-    @ExceptionHandler({ProductExceptions.BadProductName.class})
+    @ExceptionHandler({ProductExceptions.BadProductName.class, UserExceptions.UserAlreadyExistsException.class})
     public void badRequestErrorCode(HttpServletResponse response) throws IOException {
         response.sendError(HttpStatus.BAD_REQUEST.value());
     }
