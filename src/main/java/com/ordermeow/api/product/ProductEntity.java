@@ -7,7 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "product")
@@ -26,4 +28,20 @@ public class ProductEntity {
     @ApiModelProperty(notes = "The product's name")
     @NotNull
     private String productName;
+
+    @Column
+    @ApiModelProperty(notes = "The product's description")
+    @NotNull
+    private String productDescription;
+
+    @Column
+    @ApiModelProperty(notes = "The product's price")
+    @NotNull
+    private BigDecimal productPrice;
+
+    @Column
+    @ApiModelProperty(notes = "The product's image")
+    @Nullable
+    @Lob
+    private byte[] productImage;
 }
