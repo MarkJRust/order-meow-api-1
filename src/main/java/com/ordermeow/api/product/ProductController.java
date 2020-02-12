@@ -3,10 +3,12 @@ package com.ordermeow.api.product;
 import io.swagger.annotations.*;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping()
 @Api(tags = {"Product API"})
+@CrossOrigin
 public class ProductController {
 
     private final ProductService productService;
@@ -22,10 +24,10 @@ public class ProductController {
     })
     @PostMapping("/product")
     public ProductEntity createProduct(
-            @ApiParam(name = "ProductEntity", value = "product", required = true, format = MediaType.APPLICATION_JSON_VALUE, example = "{productName: \"Pizza\"")
-            @RequestBody ProductEntity product) {
-
-        return productService.createProduct(product);
+            @ApiParam(name = "ProductEntity", value = "product", required = true, format = MediaType.MULTIPART_FORM_DATA_VALUE, example = "{productName: \"Pizza\"")
+            @ModelAttribute ProductEntity product,
+            @RequestParam(required = false) MultipartFile file) {
+        return productService.createProduct(product, file);
     }
 
     @GetMapping("/product/{productId}")

@@ -27,4 +27,16 @@ public class ProductExceptions {
             super("The product price was specified incorrectly " + productPrice);
         }
     }
+
+    public static class InvalidFileException extends RuntimeException {
+        InvalidFileException() {
+            super("The file uploaded is not valid");
+        }
+    }
+
+    public static class FileNameInvalid extends RuntimeException {
+        FileNameInvalid(String fileName) {
+            super("The file name is not a valid filename " + fileName);
+        }
+    }
 }

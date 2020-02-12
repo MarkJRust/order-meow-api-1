@@ -44,4 +44,15 @@ public class ProductEntity {
     @Nullable
     @Lob
     private byte[] productImage;
+
+    @Column
+    @ApiModelProperty(notes = "The product image file name")
+    @Nullable
+    private String fileName;
+
+    @Column
+    @ApiModelProperty(notes = "The product image file type name")
+    @Nullable
+    private String fileType;
+
 }
