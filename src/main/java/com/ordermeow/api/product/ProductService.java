@@ -21,10 +21,10 @@ public class ProductService {
             throw new ProductExceptions.BadProductName(product.getProductName());
         }
         if (product.getProductDescription() == null || product.getProductDescription().isEmpty()) {
-            throw new ProductExceptions.DescriptionNotFound(product.getProductDescription());
+            throw new ProductExceptions.BadProductDescription(product.getProductDescription());
         }
-        if (product.getProductPrice() == null || product.getProductPrice().compareTo(BigDecimal.ZERO) < 0) {
-            throw new ProductExceptions.PriceNotFound(product.getProductPrice());
+        if (product.getProductPrice() == null || product.getProductPrice().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new ProductExceptions.BadProductPrice(product.getProductPrice());
         }
 
         if (file != null) {

@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
@@ -16,6 +17,7 @@ import static org.mockito.Mockito.*;
 class ProductServiceTest {
 
     private static final String PRODUCT_NAME = "GARBAGE";
+    private static final String PRODUCT_DESCRIPTION = "DESCRIPTION";
     private static final long PRODUCT_ID = 1;
 
     @InjectMocks
@@ -31,7 +33,8 @@ class ProductServiceTest {
 
         when(productRepository.save(expected)).thenReturn(expected);
 
-        ProductEntity actual = productService.createProduct(expected);
+        //TODO - Null file
+        ProductEntity actual = productService.createProduct(expected, null);
 
         Assertions.assertEquals(expected.getProductName(), actual.getProductName());
         verify(productRepository, Mockito.times(1)).save(expected);
@@ -42,7 +45,7 @@ class ProductServiceTest {
         ProductEntity badProduct = new ProductEntity();
         badProduct.setProductName(null);
 
-        Assertions.assertThrows(ProductExceptions.BadProductName.class, () -> productService.createProduct(badProduct));
+        Assertions.assertThrows(ProductExceptions.BadProductName.class, () -> productService.createProduct(badProduct, null));
     }
 
     @Test
@@ -50,7 +53,51 @@ class ProductServiceTest {
         ProductEntity badProduct = new ProductEntity();
         badProduct.setProductName("");
 
-        Assertions.assertThrows(ProductExceptions.BadProductName.class, () -> productService.createProduct(badProduct));
+        Assertions.assertThrows(ProductExceptions.BadProductName.class, () -> productService.createProduct(badProduct, null));
+    }
+
+    @Test
+    void createAlbum_nullDescriptionThrowsException() {
+        ProductEntity badProduct = new ProductEntity();
+        badProduct.setProductName(PRODUCT_NAME);
+        badProduct.setProductDescription(null);
+        Assertions.assertThrows(ProductExceptions.BadProductDescription.class, () -> productService.createProduct(badProduct, null));
+    }
+
+    @Test
+    void createAlbum_emptyDescriptionThrowsException() {
+        ProductEntity badProduct = new ProductEntity();
+        badProduct.setProductName(PRODUCT_NAME);
+        badProduct.setProductDescription("");
+
+        Assertions.assertThrows(ProductExceptions.BadProductDescription.class, () -> productService.createProduct(badProduct, null));
+    }
+
+    @Test
+    void createAlbum_nullPriceThrowsException() {
+        ProductEntity badProduct = new ProductEntity();
+        badProduct.setProductName(PRODUCT_NAME);
+        badProduct.setProductDescription(PRODUCT_DESCRIPTION);
+        badProduct.setProductPrice(null);
+        Assertions.assertThrows(ProductExceptions.BadProductPrice.class, () -> productService.createProduct(badProduct, null));
+    }
+
+    @Test
+    void createAlbum_priceEqualsZeroThrowsException() {
+        ProductEntity badProduct = new ProductEntity();
+        badProduct.setProductName(PRODUCT_NAME);
+        badProduct.setProductDescription(PRODUCT_DESCRIPTION);
+        badProduct.setProductPrice(BigDecimal.ZERO);
+        Assertions.assertThrows(ProductExceptions.BadProductPrice.class, () -> productService.createProduct(badProduct, null));
+    }
+
+    @Test
+    void createAlbum_priceLessThanZeroThrowsException() {
+        ProductEntity badProduct = new ProductEntity();
+        badProduct.setProductName(PRODUCT_NAME);
+        badProduct.setProductDescription(PRODUCT_DESCRIPTION);
+        badProduct.setProductPrice(BigDecimal.valueOf(-1));
+        Assertions.assertThrows(ProductExceptions.BadProductPrice.class, () -> productService.createProduct(badProduct, null));
     }
 
     @Test

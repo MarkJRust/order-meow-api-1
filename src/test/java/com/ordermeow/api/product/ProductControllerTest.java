@@ -48,7 +48,8 @@ class ProductControllerTest {
         productEntity.setProductId(PRODUCT_ID);
         productEntity.setProductName(PRODUCT_NAME);
 
-        Mockito.when(productService.createProduct(productEntity)).thenReturn(productEntity);
+        //TODO - null file
+        Mockito.when(productService.createProduct(productEntity, null)).thenReturn(productEntity);
         post(objectMapper.writeValueAsString(productEntity)).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
     }
 
@@ -58,7 +59,8 @@ class ProductControllerTest {
         productEntity.setProductId(PRODUCT_ID);
         productEntity.setProductName(PRODUCT_NAME);
 
-        Mockito.when(productService.createProduct(productEntity)).thenThrow(new ProductExceptions.BadProductName(PRODUCT_NAME));
+        //TODO - Null file
+        Mockito.when(productService.createProduct(productEntity, null)).thenThrow(new ProductExceptions.BadProductName(PRODUCT_NAME));
         post(objectMapper.writeValueAsString(productEntity)).andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn();
     }
 

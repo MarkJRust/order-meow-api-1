@@ -16,14 +16,14 @@ public class ProductExceptions {
         }
     }
 
-    public static class DescriptionNotFound extends RuntimeException {
-        DescriptionNotFound(String productDescription) {
+    public static class BadProductDescription extends RuntimeException {
+        BadProductDescription(String productDescription) {
             super("The product description was not specified " + productDescription);
         }
     }
 
-    public static class PriceNotFound extends RuntimeException {
-        PriceNotFound(BigDecimal productPrice) {
+    public static class BadProductPrice extends RuntimeException {
+        BadProductPrice(BigDecimal productPrice) {
             super("The product price was specified incorrectly " + productPrice);
         }
     }
