@@ -12,6 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
@@ -150,17 +152,37 @@ class ProductServiceTest {
         ProductEntity expected = new ProductEntity();
         expected.setProductId(PRODUCT_ID);
         expected.setProductName(PRODUCT_NAME);
+        expected.setProductDescription(PRODUCT_DESCRIPTION);
+        expected.setProductPrice(BigDecimal.ONE);
 
         when(productRepository.findById(PRODUCT_ID)).thenReturn(Optional.of(expected));
         ProductEntity actual = productService.getProduct(PRODUCT_ID);
 
         Assertions.assertEquals(expected.getProductName(), actual.getProductName());
+        Assertions.assertEquals(expected.getProductPrice(), actual.getProductPrice());
+        Assertions.assertEquals(expected.getProductDescription(), actual.getProductDescription());
     }
 
     @Test
     void getProduct_notFound() {
         when(productRepository.findById(PRODUCT_ID)).thenReturn(Optional.empty());
         Assertions.assertThrows(ProductExceptions.ProductNotFound.class, () -> productService.getProduct(PRODUCT_ID));
+    }
+
+    @Test
+    void getAllProducts() {
+        List<ProductEntity> expected = new ArrayList<>();
+        int numProducts = (int) (Math.random() * 10);
+        for (int i = 0; i < numProducts; i++) {
+            ProductEntity product = new ProductEntity();
+            product.setProductId((long) i);
+            product.setProductDescription("Product " + i);
+            expected.add(product);
+        }
+
+        when(productRepository.findAll()).thenReturn(expected);
+        List<ProductEntity> actual = productService.getProducts();
+
     }
 
     @Test

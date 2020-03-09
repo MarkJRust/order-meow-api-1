@@ -6,6 +6,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -48,8 +50,14 @@ public class ProductService {
 
     public ProductEntity getProduct(Long id) {
         return productRepository.findById(id).orElseThrow(() -> new ProductExceptions.ProductNotFound(id));
-
     }
+
+    public List<ProductEntity> getProducts() {
+        List<ProductEntity> products = new ArrayList<>();
+        productRepository.findAll().iterator().forEachRemaining(productEntity -> products.add(productEntity));
+        return products;
+    }
+
 
     public void deleteProductById(Long productId) {
         productRepository.findById(productId).orElseThrow(() -> new ProductExceptions.ProductNotFound(productId));
