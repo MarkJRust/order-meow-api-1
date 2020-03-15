@@ -5,6 +5,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequestMapping()
 @Api(tags = {"Product API"})
@@ -30,11 +32,26 @@ public class ProductController {
         return productService.createProduct(product, file);
     }
 
+    @ApiOperation(value = "Get Product", notes = "Gets a product with the given ID")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Success", response = ProductEntity.class),
+            @ApiResponse(code = 400, message = "Bad Request", response = Object.class)
+    })
     @GetMapping("/product/{productId}")
     public ProductEntity getProduct(
             @PathVariable Long productId) {
 
         return productService.getProduct(productId);
+    }
+
+    @ApiOperation(value = "Get All Products", notes = "Gets all products", responseContainer = "List", response = ProductEntity.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Success"),
+            @ApiResponse(code = 400, message = "Bad Request")
+    })
+    @GetMapping("/product")
+    public List<ProductEntity> getAllProducts() {
+        return productService.getProducts();
     }
 
     @DeleteMapping("/product/{productId}")
