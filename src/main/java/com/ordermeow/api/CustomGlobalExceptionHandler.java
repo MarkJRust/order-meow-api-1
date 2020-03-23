@@ -19,7 +19,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         response.sendError(HttpStatus.UNAUTHORIZED.value());
     }
 
-    @ExceptionHandler({ProductExceptions.BadProductName.class, UserExceptions.UserAlreadyExistsException.class})
+    @ExceptionHandler({ProductExceptions.BadProductName.class, ProductExceptions.BadProductDescription.class, ProductExceptions.BadProductPrice.class, ProductExceptions.InvalidFileException.class, UserExceptions.UserAlreadyExistsException.class})
     public void badRequestErrorCode(HttpServletResponse response) throws IOException {
         response.sendError(HttpStatus.BAD_REQUEST.value());
     }
@@ -27,5 +27,10 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     @ExceptionHandler({ProductExceptions.ProductNotFound.class})
     public void notFoundErrorCode(HttpServletResponse response) throws IOException {
         response.sendError(HttpStatus.NOT_FOUND.value());
+    }
+
+    @ExceptionHandler({IOException.class})
+    public void serverExceptionErrorCode(HttpServletResponse response) throws IOException {
+        response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 }

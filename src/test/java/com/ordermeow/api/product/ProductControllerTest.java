@@ -1,6 +1,5 @@
 package com.ordermeow.api.product;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ordermeow.api.CustomGlobalExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +18,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,44 +28,74 @@ import java.util.List;
 @ExtendWith(MockitoExtension.class)
 class ProductControllerTest {
 
-    private static final String PRODUCT_NAME = "Yolo swaggity swag";
-    private static final long PRODUCT_ID = 52;
+    private static final String PRODUCT_DESCRIPTION = "In the history of products, perhaps ever";
+    private static final String PRODUCT_NAME = "This is the best product";
+    private static final Long PRODUCT_ID = 59L;
+    private static final Principal principal = () -> "i-can-literally-put-whatever-i-want-here";
+
     @Mock
     private ProductService productService;
+
     @InjectMocks
     private ProductController productController;
     private MockMvc mockMvc;
-    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setup() {
         mockMvc = MockMvcBuilders.standaloneSetup(productController)
                 .setControllerAdvice(new CustomGlobalExceptionHandler())
                 .build();
-        objectMapper = new ObjectMapper();
     }
 
     @Test
     void createNewProduct_success_noImage() throws Exception {
-        ProductEntity productEntity = new ProductEntity();
-        productEntity.setProductId(PRODUCT_ID);
-        productEntity.setProductName(PRODUCT_NAME);
-
-        //TODO - null file
+        ProductEntity productEntity = createProductEntity();
         Mockito.when(productService.createProduct(productEntity, null)).thenReturn(productEntity);
-        post(objectMapper.writeValueAsString(productEntity)).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+        multipartPost(productEntity, null).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
     }
 
     @Test
-    void createNewProduct_badRequest() throws Exception {
-        ProductEntity productEntity = new ProductEntity();
-        productEntity.setProductId(PRODUCT_ID);
-        productEntity.setProductName(PRODUCT_NAME);
+    void createNewProduct_success_sendImage() throws Exception {
+        ProductEntity productEntity = createProductEntity();
+        MockMultipartFile file =
+                new MockMultipartFile(
+                        "file",
+                        "test contract.pdf",
+                        MediaType.APPLICATION_PDF_VALUE,
+                        "<<pdf data>>".getBytes(StandardCharsets.UTF_8));
 
-        //TODO - Null file
-        Mockito.when(productService.createProduct(productEntity, null)).thenThrow(new ProductExceptions.BadProductName(PRODUCT_NAME));
-        post(objectMapper.writeValueAsString(productEntity)).andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn();
+        Mockito.when(productService.createProduct(productEntity, file)).thenReturn(productEntity);
+        multipartPost(productEntity, file).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
     }
+
+    @Test
+    void createNewProduct_badRequest_badProductNameException() throws Exception {
+        ProductEntity productEntity = createProductEntity();
+        Mockito.when(productService.createProduct(productEntity, null)).thenThrow(new ProductExceptions.BadProductName(PRODUCT_NAME));
+        multipartPost(productEntity, null).andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn();
+    }
+
+    @Test
+    void createNewProduct_badRequest_badProductDescriptionException() throws Exception {
+        ProductEntity productEntity = createProductEntity();
+        Mockito.when(productService.createProduct(productEntity, null)).thenThrow(new ProductExceptions.BadProductDescription(PRODUCT_DESCRIPTION));
+        multipartPost(productEntity, null).andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn();
+    }
+
+    @Test
+    void createNewProduct_badRequest_badProductPriceException() throws Exception {
+        ProductEntity productEntity = createProductEntity();
+        Mockito.when(productService.createProduct(productEntity, null)).thenThrow(new ProductExceptions.BadProductPrice(productEntity.getProductPrice()));
+        multipartPost(productEntity, null).andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn();
+    }
+
+    @Test
+    void createNewProduct_badRequest_InvalidFileException() throws Exception {
+        ProductEntity productEntity = createProductEntity();
+        Mockito.when(productService.createProduct(productEntity, null)).thenThrow(new ProductExceptions.InvalidFileException());
+        multipartPost(productEntity, null).andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn();
+    }
+
 
     @Test
     void getProductById_success() throws Exception {
@@ -85,13 +117,15 @@ class ProductControllerTest {
     void getAllProducts_success() throws Exception {
         List<ProductEntity> products = new ArrayList<>();
 
-        //TODO - I didn't write get all products yet so gotta do this test after that
         for (int i = 0; i < Math.random() * 100; i++) {
             ProductEntity productEntity = new ProductEntity();
             productEntity.setProductId((long) i);
             productEntity.setProductName("Product " + i);
             products.add(productEntity);
         }
+
+        Mockito.when(productService.getProducts()).thenReturn(products);
+        get("/product").andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
     }
 
     @Test
@@ -105,15 +139,6 @@ class ProductControllerTest {
         Mockito.doThrow(new ProductExceptions.ProductNotFound(PRODUCT_ID))
                 .when(productService).deleteProductById(PRODUCT_ID);
         delete("/product/" + PRODUCT_ID).andExpect(MockMvcResultMatchers.status().isNotFound()).andReturn();
-    }
-
-
-    private ResultActions post(String body) throws Exception {
-        return mockMvc.perform(MockMvcRequestBuilders
-                .post("/product")
-                .content(body)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print());
     }
 
     private ResultActions get(String url) throws Exception {
@@ -131,12 +156,34 @@ class ProductControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
-    private ResultActions multipartPost(String url, MockMultipartFile file) throws Exception {
+    private ResultActions multipartPost(ProductEntity productEntity, MockMultipartFile file) throws Exception {
+        if (file != null) {
+            return mockMvc.perform(MockMvcRequestBuilders
+                            .multipart("/product")
+                            .file(file)
+                            .param("productName", productEntity.getProductName())
+                            .param("productDescription", productEntity.getProductDescription())
+                            .param("productPrice", productEntity.getProductPrice().toPlainString())
+//                .principal(principal)
+            );
+        }
+
         return mockMvc.perform(MockMvcRequestBuilders
-                        .multipart(url)
-                        .file(file)
+                        .multipart("/product")
+
+                        .param("productName", productEntity.getProductName())
+                        .param("productDescription", productEntity.getProductDescription())
+                        .param("productPrice", productEntity.getProductPrice().toPlainString())
 //                .principal(principal)
         );
 
+    }
+
+    private ProductEntity createProductEntity() {
+        ProductEntity productEntity = new ProductEntity();
+        productEntity.setProductName(PRODUCT_NAME);
+        productEntity.setProductDescription(PRODUCT_DESCRIPTION);
+        productEntity.setProductPrice(BigDecimal.ONE);
+        return productEntity;
     }
 }

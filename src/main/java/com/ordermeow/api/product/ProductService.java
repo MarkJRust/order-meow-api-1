@@ -18,7 +18,7 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public ProductEntity createProduct(ProductEntity product, MultipartFile file) throws ProductExceptions.BadProductName {
+    public ProductEntity createProduct(ProductEntity product, MultipartFile file) throws RuntimeException {
         if (product.getProductName() == null || product.getProductName().isEmpty()) {
             throw new ProductExceptions.BadProductName(product.getProductName());
         }
@@ -33,7 +33,7 @@ public class ProductService {
             String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
 
             if (fileName.contains("..")) {
-                throw new ProductExceptions.FileNameInvalid(fileName);
+                throw new ProductExceptions.InvalidFileException();
             }
 
             try {
@@ -54,7 +54,7 @@ public class ProductService {
 
     public List<ProductEntity> getProducts() {
         List<ProductEntity> products = new ArrayList<>();
-        productRepository.findAll().iterator().forEachRemaining(productEntity -> products.add(productEntity));
+        productRepository.findAll().iterator().forEachRemaining(products::add);
         return products;
     }
 

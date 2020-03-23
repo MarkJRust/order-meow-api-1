@@ -34,9 +34,4 @@ public class ProductExceptions {
         }
     }
 
-    public static class FileNameInvalid extends RuntimeException {
-        FileNameInvalid(String fileName) {
-            super("The file name is not a valid filename " + fileName);
-        }
-    }
 }

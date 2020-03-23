@@ -130,7 +130,7 @@ class ProductServiceTest {
         badProduct.setProductDescription(PRODUCT_DESCRIPTION);
         badProduct.setProductPrice(BigDecimal.valueOf(1.00));
         when(file.getOriginalFilename()).thenReturn("..");
-        Assertions.assertThrows(ProductExceptions.FileNameInvalid.class, () -> productService.createProduct(badProduct, file));
+        Assertions.assertThrows(ProductExceptions.InvalidFileException.class, () -> productService.createProduct(badProduct, file));
     }
 
     @Test
