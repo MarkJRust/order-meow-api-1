@@ -182,6 +182,7 @@ class ProductServiceTest {
 
         when(productRepository.findAll()).thenReturn(expected);
         List<ProductEntity> actual = productService.getProducts();
+        Assertions.assertIterableEquals(expected, actual);
 
     }
 

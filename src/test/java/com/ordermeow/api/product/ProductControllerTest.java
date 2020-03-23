@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -43,7 +44,7 @@ class ProductControllerTest {
     }
 
     @Test
-    void createNewProduct_success() throws Exception {
+    void createNewProduct_success_noImage() throws Exception {
         ProductEntity productEntity = new ProductEntity();
         productEntity.setProductId(PRODUCT_ID);
         productEntity.setProductName(PRODUCT_NAME);
@@ -125,7 +126,17 @@ class ProductControllerTest {
     private ResultActions delete(String url) throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders
                 .delete(url)
+//                .principal(principal)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print());
+    }
+
+    private ResultActions multipartPost(String url, MockMultipartFile file) throws Exception {
+        return mockMvc.perform(MockMvcRequestBuilders
+                        .multipart(url)
+                        .file(file)
+//                .principal(principal)
+        );
+
     }
 }
