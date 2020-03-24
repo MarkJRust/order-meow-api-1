@@ -3,15 +3,18 @@ package com.ordermeow.api.product;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.AdditionalAnswers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +26,7 @@ class ProductServiceTest {
 
     private static final String PRODUCT_NAME = "GARBAGE";
     private static final String PRODUCT_DESCRIPTION = "DESCRIPTION";
-    private static final long PRODUCT_ID = 1;
+    private static final Long PRODUCT_ID = 1L;
     private static final String FILE_NAME = "File Name.png";
     private static final String IMAGE_TYPE = MediaType.IMAGE_JPEG_VALUE;
     private static final byte[] IMAGE_BYTES = new byte[]{0x01, 0x02, 0x03};
@@ -205,5 +208,56 @@ class ProductServiceTest {
         Assertions.assertThrows(ProductExceptions.ProductNotFound.class, () -> productService.deleteProductById(PRODUCT_ID));
 
         verify(productRepository, times(0)).deleteById(PRODUCT_ID);
+    }
+
+    @Test
+    void editProduct_productNotFound() {
+        ProductEntity product = new ProductEntity();
+        product.setProductId(PRODUCT_ID);
+        when(productRepository.findById(PRODUCT_ID)).thenReturn(Optional.empty());
+        Assertions.assertThrows(ProductExceptions.ProductNotFound.class, () -> productService.editProduct(product, null));
+        verify(productRepository, times(0)).save(product);
+    }
+
+    @Test
+    void editProduct_allFieldsSuccess() throws Exception {
+        ProductEntity product = new ProductEntity();
+        ProductEntity expectedUpdatedProduct = new ProductEntity();
+
+        product.setProductId(PRODUCT_ID);
+        product.setProductName(PRODUCT_NAME);
+        product.setProductDescription(PRODUCT_DESCRIPTION);
+        product.setProductPrice(BigDecimal.ONE);
+        product.setProductImage(IMAGE_BYTES);
+        product.setFileType(IMAGE_TYPE);
+        product.setFileName(FILE_NAME);
+
+        // Updated product has new fields
+        final String UPDATED = "UPDATED";
+
+        MockMultipartFile file =
+                new MockMultipartFile(
+                        FILE_NAME + UPDATED,
+                        FILE_NAME + UPDATED,
+                        MediaType.IMAGE_GIF_VALUE,
+                        "<<pdf data>>".getBytes(StandardCharsets.UTF_8));
+
+        expectedUpdatedProduct.setProductId(PRODUCT_ID);
+        expectedUpdatedProduct.setProductName(PRODUCT_NAME + UPDATED);
+        expectedUpdatedProduct.setProductDescription(PRODUCT_DESCRIPTION + UPDATED);
+        expectedUpdatedProduct.setProductPrice(BigDecimal.TEN);
+
+        when(productRepository.findById(product.getProductId())).thenReturn(Optional.of(product));
+        when(productRepository.save(Mockito.any())).thenAnswer(AdditionalAnswers.returnsFirstArg());
+        ProductEntity actual = productService.editProduct(expectedUpdatedProduct, file);
+
+        Assertions.assertEquals(expectedUpdatedProduct.getProductName(), actual.getProductName());
+        Assertions.assertEquals(expectedUpdatedProduct.getProductDescription(), actual.getProductDescription());
+        Assertions.assertEquals(expectedUpdatedProduct.getProductPrice(), actual.getProductPrice());
+        Assertions.assertEquals(file.getContentType(), actual.getFileType());
+        Assertions.assertEquals(file.getBytes(), actual.getProductImage());
+        Assertions.assertEquals(file.getName(), actual.getFileName());
+
+        verify(productRepository, times(1)).save(Mockito.any());
     }
 }

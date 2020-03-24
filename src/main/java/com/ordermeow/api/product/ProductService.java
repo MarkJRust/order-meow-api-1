@@ -48,6 +48,42 @@ public class ProductService {
         return productRepository.save(product);
     }
 
+    public ProductEntity editProduct(ProductEntity product, MultipartFile file) {
+        if (product.getProductId() == null) {
+            throw new ProductExceptions.ProductNotFound(-1L);
+        }
+
+        ProductEntity productToUpdate = productRepository.findById(product.getProductId()).orElseThrow(() -> new ProductExceptions.ProductNotFound(product.getProductId()));
+
+        // Update product fields if they are present
+        if (product.getProductName() != null && !product.getProductName().isEmpty()) {
+            productToUpdate.setProductName(product.getProductName());
+        }
+
+        if (product.getProductDescription() != null && !product.getProductDescription().isEmpty()) {
+            productToUpdate.setProductDescription(product.getProductDescription());
+        }
+
+        if (product.getProductPrice() != null && product.getProductPrice().compareTo(BigDecimal.ZERO) > 0) {
+            productToUpdate.setProductPrice(product.getProductPrice());
+        }
+
+        if (file != null) {
+            String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+
+            if (!fileName.contains("..")) {
+                try {
+                    productToUpdate.setFileName(fileName);
+                    productToUpdate.setFileType(file.getContentType());
+                    productToUpdate.setProductImage(file.getBytes());
+                } catch (IOException ignored) {
+                }
+            }
+        }
+
+        return productRepository.save(productToUpdate);
+    }
+
     public ProductEntity getProduct(Long id) {
         return productRepository.findById(id).orElseThrow(() -> new ProductExceptions.ProductNotFound(id));
     }
