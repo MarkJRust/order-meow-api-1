@@ -32,6 +32,21 @@ public class ProductController {
         return productService.createProduct(product, file);
     }
 
+    @ApiOperation(value = "Edit Product", notes = "Edits an existing product")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Success", response = ProductEntity.class),
+            @ApiResponse(code = 400, message = "Bad Request", response = Object.class)
+    })
+    @PostMapping("/product/{productId}")
+    public ProductEntity editProduct(
+            @ApiParam(name = "ProductEntity", value = "product", required = true, format = MediaType.MULTIPART_FORM_DATA_VALUE, example = "{productName: \"Pizza\"")
+            @ModelAttribute ProductEntity product,
+            @RequestParam(required = false) MultipartFile file,
+            @PathVariable(name = "productId") Long id) {
+        product.setProductId(id);
+        return productService.editProduct(product, file);
+    }
+
     @ApiOperation(value = "Get Product", notes = "Gets a product with the given ID")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Success", response = ProductEntity.class),
