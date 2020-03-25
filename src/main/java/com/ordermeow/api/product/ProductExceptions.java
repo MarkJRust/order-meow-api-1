@@ -11,7 +11,7 @@ public class ProductExceptions {
     }
 
     public static class ProductNotFound extends RuntimeException {
-        ProductNotFound(Long productId) {
+        public ProductNotFound(Long productId) {
             super("The product was not found: " + productId);
         }
     }
