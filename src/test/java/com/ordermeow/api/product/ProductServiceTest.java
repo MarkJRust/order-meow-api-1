@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -253,7 +254,7 @@ class ProductServiceTest {
 
         Assertions.assertEquals(expectedUpdatedProduct.getProductName(), actual.getProductName());
         Assertions.assertEquals(expectedUpdatedProduct.getProductDescription(), actual.getProductDescription());
-        Assertions.assertEquals(expectedUpdatedProduct.getProductPrice(), actual.getProductPrice());
+        Assertions.assertEquals(expectedUpdatedProduct.getProductPrice().setScale(2, RoundingMode.CEILING), actual.getProductPrice());
         Assertions.assertEquals(file.getContentType(), actual.getFileType());
         Assertions.assertEquals(file.getBytes(), actual.getProductImage());
         Assertions.assertEquals(file.getName(), actual.getFileName());

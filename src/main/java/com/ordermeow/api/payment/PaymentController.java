@@ -32,4 +32,6 @@ public class PaymentController {
             @RequestBody List<Long> productIds) {
         return paymentService.calculateTotal(productIds);
     }
+
+
 }

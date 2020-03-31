@@ -45,6 +45,9 @@ public class ProductService {
             }
         }
 
+        // Convert the price to two decimal places with rounding
+        product.setProductPrice(product.getProductPrice().setScale(2, BigDecimal.ROUND_CEILING));
+
         return productRepository.save(product);
     }
 
@@ -65,7 +68,7 @@ public class ProductService {
         }
 
         if (product.getProductPrice() != null && product.getProductPrice().compareTo(BigDecimal.ZERO) > 0) {
-            productToUpdate.setProductPrice(product.getProductPrice());
+            productToUpdate.setProductPrice(product.getProductPrice().setScale(2, BigDecimal.ROUND_CEILING));
         }
 
         if (file != null) {
