@@ -19,6 +19,7 @@ public class ProductService {
     }
 
     public ProductEntity createProduct(ProductEntity product, MultipartFile file) throws RuntimeException {
+        //TODO - (future) max character length on these names/descriptions should be checked
         if (product.getProductName() == null || product.getProductName().isEmpty()) {
             throw new ProductExceptions.BadProductName(product.getProductName());
         }
@@ -35,6 +36,8 @@ public class ProductService {
             if (fileName.contains("..")) {
                 throw new ProductExceptions.InvalidFileException();
             }
+
+            //TODO - (future) Add allowed content types
 
             try {
                 product.setFileName(fileName);
