@@ -1,9 +1,8 @@
 package com.ordermeow.api.security;
 
-import com.ordermeow.api.security.JWTAuthenticationFilter;
-import com.ordermeow.api.security.JWTAuthorizationFilter;
 import com.ordermeow.api.user.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -30,7 +29,9 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
 
                 // Non-authenticated application endpoints
-                .antMatchers("/register", "/product","/**").permitAll()
+                .antMatchers("/register").permitAll()
+                .antMatchers(HttpMethod.GET, "/product", "/product/**").permitAll()
+                .antMatchers("/calculate").permitAll()
 
                 // Swagger
                 .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/security", "/swagger-ui.html", "/webjars/**").permitAll()

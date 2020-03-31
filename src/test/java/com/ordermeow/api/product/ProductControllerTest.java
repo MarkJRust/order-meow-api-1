@@ -31,7 +31,7 @@ class ProductControllerTest {
     private static final String PRODUCT_DESCRIPTION = "In the history of products, perhaps ever";
     private static final String PRODUCT_NAME = "This is the best product";
     private static final Long PRODUCT_ID = 59L;
-    private static final Principal principal = () -> "i-can-literally-put-whatever-i-want-here";
+    private static final Principal principal = () -> "i-can-put-whatever-i-want-here";
 
     @Mock
     private ProductService productService;
@@ -170,7 +170,7 @@ class ProductControllerTest {
     private ResultActions delete(String url) throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders
                 .delete(url)
-//                .principal(principal)
+                .principal(principal)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print());
     }
@@ -178,21 +178,21 @@ class ProductControllerTest {
     private ResultActions multipartPost(String url, ProductEntity productEntity, MockMultipartFile file) throws Exception {
         if (file != null) {
             return mockMvc.perform(MockMvcRequestBuilders
-                            .multipart(url)
-                            .file(file)
-                            .param("productName", productEntity.getProductName())
-                            .param("productDescription", productEntity.getProductDescription())
-                            .param("productPrice", productEntity.getProductPrice().toPlainString())
-//                .principal(principal)
+                    .multipart(url)
+                    .file(file)
+                    .param("productName", productEntity.getProductName())
+                    .param("productDescription", productEntity.getProductDescription())
+                    .param("productPrice", productEntity.getProductPrice().toPlainString())
+                    .principal(principal)
             );
         }
 
         return mockMvc.perform(MockMvcRequestBuilders
-                        .multipart(url)
-                        .param("productName", productEntity.getProductName())
-                        .param("productDescription", productEntity.getProductDescription())
-                        .param("productPrice", productEntity.getProductPrice().toPlainString())
-//                .principal(principal)
+                .multipart(url)
+                .param("productName", productEntity.getProductName())
+                .param("productDescription", productEntity.getProductDescription())
+                .param("productPrice", productEntity.getProductPrice().toPlainString())
+                .principal(principal)
         );
 
     }
