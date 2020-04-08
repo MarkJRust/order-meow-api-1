@@ -23,8 +23,8 @@ public class ProductExceptions {
     }
 
     public static class BadProductPrice extends RuntimeException {
-        BadProductPrice(BigDecimal productPrice) {
-            super("The product price was specified incorrectly " + productPrice);
+        public BadProductPrice(BigDecimal price) {
+            super("The product price is not valid: " + price);
         }
     }
 

@@ -31,10 +31,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 // Non-authenticated application endpoints
                 .antMatchers("/register").permitAll()
                 .antMatchers(HttpMethod.GET, "/product", "/product/**").permitAll()
-                .antMatchers("/calculate").permitAll()
+                .antMatchers(HttpMethod.POST, "/calculate").permitAll()
+                .antMatchers(HttpMethod.POST, "/payment").permitAll()
+                .antMatchers(HttpMethod.POST, "/order").permitAll()
 
                 // Swagger
-                .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/security", "/swagger-ui.html", "/webjars/**").permitAll()
+                .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/security", "/swagger-ui.html**", "/webjars/**").permitAll()
 
                 // Non-authenticated endpoints
                 .antMatchers("/favicon.ico", "/h2-console/**", "/console/**").permitAll()
