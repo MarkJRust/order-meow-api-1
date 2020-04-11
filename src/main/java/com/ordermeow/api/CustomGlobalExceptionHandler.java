@@ -1,5 +1,6 @@
 package com.ordermeow.api;
 
+import com.ordermeow.api.order.OrderExceptions;
 import com.ordermeow.api.product.ProductExceptions;
 import com.ordermeow.api.user.UserExceptions;
 import org.springframework.http.HttpStatus;
@@ -19,12 +20,20 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         response.sendError(HttpStatus.UNAUTHORIZED.value());
     }
 
-    @ExceptionHandler({ProductExceptions.BadProductName.class, ProductExceptions.BadProductDescription.class, ProductExceptions.BadProductPrice.class, ProductExceptions.InvalidFileException.class, UserExceptions.UserAlreadyExistsException.class})
+    @ExceptionHandler({
+            ProductExceptions.BadProductName.class,
+            ProductExceptions.BadProductDescription.class,
+            ProductExceptions.BadProductPrice.class,
+            ProductExceptions.InvalidFileException.class,
+            UserExceptions.UserAlreadyExistsException.class,
+            ProductExceptions.BadProductPrice.class,
+            OrderExceptions.DifferentTotalPrices.class
+    })
     public void badRequestErrorCode(HttpServletResponse response) throws IOException {
         response.sendError(HttpStatus.BAD_REQUEST.value());
     }
 
-    @ExceptionHandler({ProductExceptions.ProductNotFound.class})
+    @ExceptionHandler({ProductExceptions.ProductNotFound.class, OrderExceptions.OrderNotFound.class})
     public void notFoundErrorCode(HttpServletResponse response) throws IOException {
         response.sendError(HttpStatus.NOT_FOUND.value());
     }

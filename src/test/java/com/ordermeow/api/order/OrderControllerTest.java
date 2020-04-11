@@ -1,4 +1,4 @@
-package com.ordermeow.api.payment;
+package com.ordermeow.api.order;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ordermeow.api.CustomGlobalExceptionHandler;
@@ -26,20 +26,20 @@ import java.util.List;
 
 @ActiveProfiles("local")
 @ExtendWith(MockitoExtension.class)
-class PaymentControllerTest {
+class OrderControllerTest {
 
 
     @Mock
-    private PaymentService paymentService;
+    private OrderService orderService;
 
     @InjectMocks
-    private PaymentController paymentController;
+    private OrderController orderController;
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
 
     @BeforeEach
     void setup() {
-        mockMvc = MockMvcBuilders.standaloneSetup(paymentController)
+        mockMvc = MockMvcBuilders.standaloneSetup(orderController)
                 .setControllerAdvice(new CustomGlobalExceptionHandler())
                 .build();
 
@@ -53,7 +53,7 @@ class PaymentControllerTest {
         ids.add(2L);
 
         BigDecimal total = BigDecimal.ONE;
-        Mockito.when(paymentService.calculateTotal(ids)).thenReturn(total);
+        Mockito.when(orderService.calculateTotal(ids)).thenReturn(total);
         post(objectMapper.writeValueAsString(ids))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print())
@@ -65,7 +65,7 @@ class PaymentControllerTest {
         List<Long> ids = new ArrayList<>();
         ids.add(1L);
 
-        Mockito.when(paymentService.calculateTotal(ids)).thenThrow(new ProductExceptions.ProductNotFound(1L));
+        Mockito.when(orderService.calculateTotal(ids)).thenThrow(new ProductExceptions.ProductNotFound(1L));
         post(objectMapper.writeValueAsString(ids))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andDo(MockMvcResultHandlers.print())
