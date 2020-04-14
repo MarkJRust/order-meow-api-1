@@ -116,7 +116,7 @@ public class OrderController {
             lineItems.add(SessionCreateParams.LineItem.builder()
                     .setName(product.getProductName())
                     .setDescription(product.getProductDescription())
-                    .setAmount(expectedCost.multiply(BigDecimal.valueOf(100)).longValue())
+                    .setAmount(product.getProductPrice().multiply(BigDecimal.valueOf(100)).longValue())
                     .setCurrency("usd")
                     .setQuantity(1L)
                     .build());
