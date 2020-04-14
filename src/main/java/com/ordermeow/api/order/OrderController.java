@@ -106,7 +106,7 @@ public class OrderController {
         }
 
         expectedCost = expectedCost.setScale(2, RoundingMode.CEILING);
-        expectedCost = expectedCost.multiply(BigDecimal.valueOf(100));
+
 
         List<ProductEntity> orderedProducts = orderService.verifyTotal(productIds, expectedCost);
 
@@ -116,7 +116,7 @@ public class OrderController {
             lineItems.add(SessionCreateParams.LineItem.builder()
                     .setName(product.getProductName())
                     .setDescription(product.getProductDescription())
-                    .setAmount(product.getProductPrice().longValue())
+                    .setAmount(expectedCost.multiply(BigDecimal.valueOf(100)).longValue())
                     .setCurrency("usd")
                     .setQuantity(1L)
                     .build());
