@@ -33,6 +33,9 @@ dependencies {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
 	testImplementation 'org.springframework.security:spring-security-test'
+	compile "com.stripe:stripe-java:18.16.0"
+
+	implementation 'org.json:json:20180130'
 }
 
 test {

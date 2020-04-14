@@ -34,6 +34,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/calculate").permitAll()
                 .antMatchers(HttpMethod.POST, "/payment").permitAll()
                 .antMatchers(HttpMethod.POST, "/order").permitAll()
+                .antMatchers(HttpMethod.POST, "/createOrder").permitAll()
 
                 // Swagger
                 .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/security", "/swagger-ui.html**", "/webjars/**").permitAll()

@@ -33,8 +33,12 @@ public class OrderService {
     }
 
     public List<OrderEntity> createOrder(List<Long> products, BigDecimal expectedTotal) {
-        List<ProductEntity> orderedProducts = verifyTotal(products, expectedTotal);
         UUID orderUuid = UUID.randomUUID();
+        List<ProductEntity> orderedProducts = verifyTotal(products, expectedTotal);
+        return createOrder(orderedProducts, expectedTotal, orderUuid.toString());
+    }
+
+    public List<OrderEntity> createOrder(List<ProductEntity> orderedProducts, BigDecimal expectedTotal, String orderUuid) {
         List<OrderEntity> completeOrder = new ArrayList<>();
 
         for (ProductEntity product : orderedProducts) {
@@ -58,7 +62,7 @@ public class OrderService {
      * Confirm that the previous total matches the current total - ensures that the prices didn't
      * change between the customer checking their cart and actually placing the order
      */
-    private List<ProductEntity> verifyTotal(List<Long> products, BigDecimal expectedTotal) {
+    protected List<ProductEntity> verifyTotal(List<Long> products, BigDecimal expectedTotal) {
         BigDecimal cost = BigDecimal.ZERO;
 
         List<ProductEntity> productEntityList = new ArrayList<>();
