@@ -1,7 +1,6 @@
 package com.ordermeow.api.order;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 public class OrderExceptions {
 
